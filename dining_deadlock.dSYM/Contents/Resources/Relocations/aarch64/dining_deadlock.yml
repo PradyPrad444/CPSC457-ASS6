@@ -1,0 +1,17 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     dining_deadlock
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _nap, symObjAddr: 0x0, symBinAddr: 0x100003610, symSize: 0x34 }
+  - { offsetInCU: 0x59, offset: 0x59, size: 0x8, addend: 0x0, symName: _chopsticks, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x212, offset: 0x212, size: 0x8, addend: 0x0, symName: _num_philosophers, symBinAddr: 0x100008008, symSize: 0x0 }
+  - { offsetInCU: 0x227, offset: 0x227, size: 0x8, addend: 0x0, symName: _print_mutex, symBinAddr: 0x100008010, symSize: 0x0 }
+  - { offsetInCU: 0x23A, offset: 0x23A, size: 0x8, addend: 0x0, symName: _nap, symObjAddr: 0x0, symBinAddr: 0x100003610, symSize: 0x34 }
+  - { offsetInCU: 0x25E, offset: 0x25E, size: 0x8, addend: 0x0, symName: _philosopher, symObjAddr: 0x34, symBinAddr: 0x100003644, symSize: 0x218 }
+  - { offsetInCU: 0x2B0, offset: 0x2B0, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x24C, symBinAddr: 0x10000385C, symSize: 0x2C0 }
+  - { offsetInCU: 0x26, offset: 0x3A2, size: 0x8, addend: 0x0, symName: _semaphore_init, symObjAddr: 0x0, symBinAddr: 0x100003B1C, symSize: 0x60 }
+  - { offsetInCU: 0x113, offset: 0x48F, size: 0x8, addend: 0x0, symName: _semaphore_init, symObjAddr: 0x0, symBinAddr: 0x100003B1C, symSize: 0x60 }
+  - { offsetInCU: 0x145, offset: 0x4C1, size: 0x8, addend: 0x0, symName: _semaphore_wait, symObjAddr: 0x60, symBinAddr: 0x100003B7C, symSize: 0x150 }
+  - { offsetInCU: 0x1A1, offset: 0x51D, size: 0x8, addend: 0x0, symName: _semaphore_signal, symObjAddr: 0x1B0, symBinAddr: 0x100003CCC, symSize: 0x6C }
+  - { offsetInCU: 0x1C5, offset: 0x541, size: 0x8, addend: 0x0, symName: _semaphore_destroy, symObjAddr: 0x21C, symBinAddr: 0x100003D38, symSize: 0x7C }
+...

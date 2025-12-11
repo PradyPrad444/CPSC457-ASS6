@@ -1,0 +1,20 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     producer_consumer
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _buffer_init, symObjAddr: 0x0, symBinAddr: 0x100003260, symSize: 0x88 }
+  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _buffer_init, symObjAddr: 0x0, symBinAddr: 0x100003260, symSize: 0x88 }
+  - { offsetInCU: 0x74, offset: 0x74, size: 0x8, addend: 0x0, symName: _buffer_destroy, symObjAddr: 0x88, symBinAddr: 0x1000032E8, symSize: 0x4C }
+  - { offsetInCU: 0x98, offset: 0x98, size: 0x8, addend: 0x0, symName: _buffer_produce, symObjAddr: 0xD4, symBinAddr: 0x100003334, symSize: 0x90 }
+  - { offsetInCU: 0xCA, offset: 0xCA, size: 0x8, addend: 0x0, symName: _buffer_consume, symObjAddr: 0x164, symBinAddr: 0x1000033C4, symSize: 0x90 }
+  - { offsetInCU: 0x100, offset: 0x100, size: 0x8, addend: 0x0, symName: _producer_thread, symObjAddr: 0x1F4, symBinAddr: 0x100003454, symSize: 0x70 }
+  - { offsetInCU: 0x152, offset: 0x152, size: 0x8, addend: 0x0, symName: _consumer_thread, symObjAddr: 0x264, symBinAddr: 0x1000034C4, symSize: 0x70 }
+  - { offsetInCU: 0x1C0, offset: 0x1C0, size: 0x8, addend: 0x0, symName: _get_time_ms, symObjAddr: 0x2D4, symBinAddr: 0x100003534, symSize: 0x4C }
+  - { offsetInCU: 0x1E8, offset: 0x1E8, size: 0x8, addend: 0x0, symName: _run_experiment, symObjAddr: 0x320, symBinAddr: 0x100003580, symSize: 0x34C }
+  - { offsetInCU: 0x34E, offset: 0x34E, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x66C, symBinAddr: 0x1000038CC, symSize: 0x23C }
+  - { offsetInCU: 0x26, offset: 0x8D7, size: 0x8, addend: 0x0, symName: _semaphore_init, symObjAddr: 0x0, symBinAddr: 0x100003B08, symSize: 0x60 }
+  - { offsetInCU: 0x113, offset: 0x9C4, size: 0x8, addend: 0x0, symName: _semaphore_init, symObjAddr: 0x0, symBinAddr: 0x100003B08, symSize: 0x60 }
+  - { offsetInCU: 0x145, offset: 0x9F6, size: 0x8, addend: 0x0, symName: _semaphore_wait, symObjAddr: 0x60, symBinAddr: 0x100003B68, symSize: 0x150 }
+  - { offsetInCU: 0x1A1, offset: 0xA52, size: 0x8, addend: 0x0, symName: _semaphore_signal, symObjAddr: 0x1B0, symBinAddr: 0x100003CB8, symSize: 0x6C }
+  - { offsetInCU: 0x1C5, offset: 0xA76, size: 0x8, addend: 0x0, symName: _semaphore_destroy, symObjAddr: 0x21C, symBinAddr: 0x100003D24, symSize: 0x7C }
+...
