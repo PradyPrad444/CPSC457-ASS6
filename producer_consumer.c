@@ -8,13 +8,14 @@
 #define BUFFER_SIZE 100
 #define ITEMS_PER_PRODUCER 100
 
+// circular buffer structure
 typedef struct {
   int *buffer;
-  int in;
-  int out;
+  int in;  // next insert position
+  int out; // next remove position
   int size;
-  Semaphore empty;
-  Semaphore full;
+  Semaphore empty; // tracks empty slots
+  Semaphore full;  // tracks filled slots
   pthread_mutex_t mutex;
 } CircularBuffer;
 
@@ -28,8 +29,8 @@ void buffer_init(CircularBuffer *buf, int size) {
   buf->in = 0;
   buf->out = 0;
   buf->size = size;
-  semaphore_init(&buf->empty, size);
-  semaphore_init(&buf->full, 0);
+  semaphore_init(&buf->empty, size); // initially all empty
+  semaphore_init(&buf->full, 0);     // initially none full
   pthread_mutex_init(&buf->mutex, NULL);
 }
 
@@ -41,24 +42,30 @@ void buffer_destroy(CircularBuffer *buf) {
 }
 
 void buffer_insert(CircularBuffer *buf, int item) {
+  // wait for empty slot
   semaphore_wait(&buf->empty);
+
+  // critical section - update buffer
   pthread_mutex_lock(&buf->mutex);
-
   buf->buffer[buf->in] = item;
-  buf->in = (buf->in + 1) % buf->size;
-
+  buf->in = (buf->in + 1) % buf->size; // wrap around
   pthread_mutex_unlock(&buf->mutex);
+
+  // signal that one more slot is full
   semaphore_signal(&buf->full);
 }
 
 int buffer_remove(CircularBuffer *buf) {
+  // wait for full slot
   semaphore_wait(&buf->full);
+
+  // critical section - remove from buffer
   pthread_mutex_lock(&buf->mutex);
-
   int item = buf->buffer[buf->out];
-  buf->out = (buf->out + 1) % buf->size;
-
+  buf->out = (buf->out + 1) % buf->size; // wrap around
   pthread_mutex_unlock(&buf->mutex);
+
+  // signal that one more slot is empty
   semaphore_signal(&buf->empty);
 
   return item;
@@ -68,8 +75,9 @@ void *producer(void *arg) {
   int id = *(int *)arg;
   int base = id * ITEMS_PER_PRODUCER;
 
+  // produce ITEMS_PER_PRODUCER items
   for (int i = 0; i < ITEMS_PER_PRODUCER; i++) {
-    int item = base + i;
+    int item = base + i; // unique item id
     buffer_insert(&shared_buffer, item);
   }
 
@@ -78,21 +86,16 @@ void *producer(void *arg) {
 }
 
 void *consumer(void *arg) {
-  int items_consumed = 0;
-  int *count = (int *)arg;
+  int *items_to_consume = (int *)arg;
+  int consumed = 0;
 
-  while (1) {
-    pthread_mutex_lock(&shared_buffer.mutex);
-    if (items_consumed >= *count) {
-      pthread_mutex_unlock(&shared_buffer.mutex);
-      break;
-    }
-    items_consumed++;
-    pthread_mutex_unlock(&shared_buffer.mutex);
-
+  // consume assigned number of items
+  while (consumed < *items_to_consume) {
     buffer_remove(&shared_buffer);
+    consumed++;
   }
 
+  free(arg);
   return NULL;
 }
 
@@ -116,35 +119,41 @@ void run_experiment(int n_prod, int n_cons, FILE *output) {
 
   double start_time = get_time_ms();
 
-  // Create producers
+  // spawn producer threads
   for (int i = 0; i < num_producers; i++) {
     int *id = (int *)malloc(sizeof(int));
     *id = i;
     pthread_create(&prod_threads[i], NULL, producer, id);
   }
 
-  // Create consumers
+  // spawn consumer threads
+  // distribute items evenly, handle remainder
   int items_per_consumer = total_items / num_consumers;
-  int remaining = total_items % num_consumers;
+  int leftover = total_items % num_consumers;
 
   for (int i = 0; i < num_consumers; i++) {
     int *count = (int *)malloc(sizeof(int));
-    *count = items_per_consumer + (i < remaining ? 1 : 0);
+    // first 'leftover' consumers get one extra item
+    *count = items_per_consumer;
+    if (i < leftover) {
+      *count = *count + 1;
+    }
     pthread_create(&cons_threads[i], NULL, consumer, count);
   }
 
-  // Wait for all threads
+  // wait for producers to finish
   for (int i = 0; i < num_producers; i++) {
     pthread_join(prod_threads[i], NULL);
   }
 
+  // wait for consumers to finish
   for (int i = 0; i < num_consumers; i++) {
     pthread_join(cons_threads[i], NULL);
   }
 
   double end_time = get_time_ms();
-  double elapsed_time = end_time - start_time;
-  double throughput = elapsed_time / total_items;
+  double elapsed = end_time - start_time;
+  double throughput = elapsed / total_items;
 
   fprintf(output, "%d,%d,%f\n", num_producers, num_consumers, throughput);
   printf("Producers: %d, Consumers: %d, Throughput: %f ms/item\n",
@@ -162,6 +171,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (strcmp(argv[1], "fixed_producers") == 0) {
+    // experiment 1: fixed 10 producers, varying consumers
     FILE *fp = fopen("output_exp1.csv", "w");
     fprintf(fp, "producers,consumers,throughput\n");
 
@@ -172,6 +182,7 @@ int main(int argc, char *argv[]) {
     fclose(fp);
     printf("Experiment 1 completed. Results saved to output_exp1.csv\n");
   } else if (strcmp(argv[1], "fixed_consumers") == 0) {
+    // experiment 2: varying producers, fixed 10 consumers
     FILE *fp = fopen("output_exp2.csv", "w");
     fprintf(fp, "producers,consumers,throughput\n");
 
