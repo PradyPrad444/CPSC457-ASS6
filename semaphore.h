@@ -3,36 +3,38 @@
 
 #include <pthread.h>
 
-// Node in the FIFO queue of waiting threads
+// FIFO Queue Node
 typedef struct QueueNode {
   pthread_t id;
   struct QueueNode *next;
 } QueueNode;
 
-// Simple FIFO queue
+// FIFO Queue
 typedef struct {
   QueueNode *front;
   QueueNode *rear;
 } Queue;
 
-// Monitor-style counting semaphore
+// Monitor-Style Semaphore
 typedef struct {
   int count;
-  pthread_mutex_t mutex; // protects count + queue
-  pthread_cond_t cond;   // condition variable for waiting threads
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
   Queue waiting_queue;
 } Semaphore;
 
-void semaphore_init(Semaphore *sem, int initial_value);
+// Queue operations
+void queue_init(Queue *q);
+void queue_enqueue(Queue *q, pthread_t id);
+pthread_t queue_dequeue(Queue *q);
+pthread_t queue_front(Queue *q);
+int queue_is_empty(Queue *q);
+void queue_destroy(Queue *q);
+
+// Semaphore operations
+void semaphore_init(Semaphore *sem, int value);
 void semaphore_wait(Semaphore *sem);
 void semaphore_signal(Semaphore *sem);
 void semaphore_destroy(Semaphore *sem);
-
-// Queue helpers
-void queue_init(Queue *q);
-void queue_enqueue(Queue *q, pthread_t thread_id);
-pthread_t queue_dequeue(Queue *q);
-int queue_is_empty(Queue *q);
-void queue_destroy(Queue *q);
 
 #endif

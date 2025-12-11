@@ -21,30 +21,30 @@ void *philosopher(void *arg) {
     // first
     if (id % 2 == 0) {
       // Even: pick right then left
+      // For even philosophers:
+      semaphore_wait(&chopsticks[right]); // WAIT FIRST
       pthread_mutex_lock(&print_mutex);
       printf("Meal %d: Phil %d acquired chopstick %d\n", meal + 1, id, right);
       pthread_mutex_unlock(&print_mutex);
-      semaphore_wait(&chopsticks[right]);
-
       nap(10000);
 
+      semaphore_wait(&chopsticks[left]); // WAIT FIRST
       pthread_mutex_lock(&print_mutex);
       printf("Meal %d: Phil %d acquired chopstick %d\n", meal + 1, id, left);
       pthread_mutex_unlock(&print_mutex);
-      semaphore_wait(&chopsticks[left]);
     } else {
       // Odd: pick left then right
+      semaphore_wait(&chopsticks[left]);
       pthread_mutex_lock(&print_mutex);
       printf("Meal %d: Phil %d acquired chopstick %d\n", meal + 1, id, left);
       pthread_mutex_unlock(&print_mutex);
-      semaphore_wait(&chopsticks[left]);
 
       nap(10000);
 
+      semaphore_wait(&chopsticks[right]);
       pthread_mutex_lock(&print_mutex);
       printf("Meal %d: Phil %d acquired chopstick %d\n", meal + 1, id, right);
       pthread_mutex_unlock(&print_mutex);
-      semaphore_wait(&chopsticks[right]);
     }
 
     // Eating
